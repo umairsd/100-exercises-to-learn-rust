@@ -1,8 +1,19 @@
+use std::thread::panicking;
+
 // TODO: `easy_ticket` should panic when the title is invalid.
 //   When the description is invalid, instead, it should use a default description:
 //   "Description not provided".
 fn easy_ticket(title: String, description: String, status: Status) -> Ticket {
-    todo!()
+    match Ticket::new(title.clone(), description.clone(), status.clone()) {
+        Ok(ticket) => ticket,
+        Err(error) => {
+            if error.contains("Description") {
+                Ticket::new(title, "Description not provided".to_string(), status).unwrap()
+            } else {
+                panic!("{error}");
+            }
+        }
+    }
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -39,6 +50,10 @@ impl Ticket {
             description,
             status,
         })
+    }
+
+    fn is_description_valid(description: String) -> bool {
+        return description.is_empty() || description.len() > 500;
     }
 }
 
