@@ -6,20 +6,6 @@ pub struct TicketStore {
     tickets: Vec<Ticket>,
 }
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct Ticket {
-    pub title: TicketTitle,
-    pub description: TicketDescription,
-    pub status: Status,
-}
-
-#[derive(Clone, Debug, Copy, PartialEq)]
-pub enum Status {
-    ToDo,
-    InProgress,
-    Done,
-}
-
 impl TicketStore {
     pub fn new() -> Self {
         Self {
@@ -34,6 +20,34 @@ impl TicketStore {
     pub fn iter(&self) -> std::slice::Iter<Ticket> {
         self.tickets.iter()
     }
+}
+
+// The lifetime parameter 'a means that the references to `Ticket`s that
+// are returned by the iterator don't outlive the `TicketStore` they come
+// from.
+impl<'a> IntoIterator for &'a TicketStore {
+    // The iterator will yield references to the `Ticket`s with the same
+    // lifetime as the `TicketStore` reference.
+    type Item = &'a Ticket;
+    type IntoIter = std::slice::Iter<'a, Ticket>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.tickets.iter()
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Ticket {
+    pub title: TicketTitle,
+    pub description: TicketDescription,
+    pub status: Status,
+}
+
+#[derive(Clone, Debug, Copy, PartialEq)]
+pub enum Status {
+    ToDo,
+    InProgress,
+    Done,
 }
 
 #[cfg(test)]
