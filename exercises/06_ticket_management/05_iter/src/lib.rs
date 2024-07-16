@@ -1,5 +1,3 @@
-use std::any::Any;
-
 use ticket_fields::{TicketDescription, TicketTitle};
 
 // TODO: Provide an `iter` method that returns an iterator over `&Ticket` items.
